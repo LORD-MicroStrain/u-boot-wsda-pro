@@ -81,6 +81,9 @@ enum {
 #define TPS65217_PWR_SRC_USB_BITMASK		0x4
 #define TPS65217_PWR_SRC_AC_BITMASK		0x8
 
+#define TPS65217_PWR_PATH_OFF 			0x00
+#define TPS65217_PWR_PATH_EN_USB_BITMASK  0x10
+
 int tps65217_reg_read(uchar src_reg, uchar *src_val);
 int tps65217_reg_write(uchar prot_level, uchar dest_reg, uchar dest_val,
 		       uchar mask);

@@ -11,22 +11,28 @@
 
 #define DEFAULT_MMC_TI_ARGS \
 	"mmcdev=0\0" \
-	"mmcrootfstype=ext4 rootwait\0" \
+	"mmcrootfstype=squashfs rootwait\0" \
+	"findmmcroot=" \
+		"if test $bootsel = 2; then " \
+			"setenv mmcroot /dev/mmcblk1p3 ro; " \
+		"else " \
+			"setenv mmcroot /dev/mmcblk1p2 ro; " \
+		"fi;\0" \
 	"finduuid=part uuid mmc ${bootpart} uuid\0" \
 	"args_mmc=run finduuid;setenv bootargs console=${console} " \
 		"${optargs} " \
-		"root=PARTUUID=${uuid} rw " \
+		"root=${mmcroot} " \
 		"rootfstype=${mmcrootfstype}\0" \
-	"loadbootscript=load mmc ${mmcdev} ${loadaddr} boot.scr\0" \
+	"loadbootscript=load mmc ${mmcdev} ${loadaddr} bbb-factory.script\0" \
 	"bootscript=echo Running bootscript from mmc${mmcdev} ...; " \
 		"source ${loadaddr}\0" \
 	"bootenvfile=uEnv.txt\0" \
 	"importbootenv=echo Importing environment from mmc${mmcdev} ...; " \
 		"env import -t ${loadaddr} ${filesize}\0" \
 	"loadbootenv=fatload mmc ${mmcdev} ${loadaddr} ${bootenvfile}\0" \
-	"loadimage=load ${devtype} ${bootpart} ${loadaddr} ${bootdir}/${bootfile}\0" \
-	"loadfdt=load ${devtype} ${bootpart} ${fdtaddr} ${bootdir}/${fdtfile}\0" \
-	"envboot=mmc dev ${mmcdev}; " \
+	"loadimage=load ${devtype} ${bootpart} ${loadaddr} ${bootfile}\0" \
+	"loadfdt=load ${devtype} ${bootpart} ${fdtaddr} ${fdtfile}\0" \
+	"mmcbootenv=mmc dev ${mmcdev}; " \
 		"if mmc rescan; then " \
 			"echo SD/MMC found on device ${mmcdev};" \
 			"if run loadbootscript; then " \
@@ -42,19 +48,25 @@
 				"fi;" \
 			"fi;" \
 		"fi;\0" \
+	"envboot=mmc dev 1; " \
+		"run mmcbootenv; " \
+		"setenv mmcdev 0; " \
+		"run mmcbootenv; " \
+		"run findfdt; " \
+		"run finduimage;\0" \
 	"mmcloados=run args_mmc; " \
 		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
 			"if run loadfdt; then " \
-				"bootz ${loadaddr} - ${fdtaddr}; " \
+				"bootm ${loadaddr} - ${fdtaddr}; " \
 			"else " \
 				"if test ${boot_fdt} = try; then " \
-					"bootz; " \
+					"bootm; " \
 				"else " \
 					"echo WARN: Cannot load the DT; " \
 				"fi; " \
 			"fi; " \
 		"else " \
-			"bootz; " \
+			"bootm; " \
 		"fi;\0" \
 	"mmcboot=mmc dev ${mmcdev}; " \
 		"setenv devnum ${mmcdev}; " \

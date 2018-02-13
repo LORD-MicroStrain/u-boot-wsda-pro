@@ -366,6 +366,13 @@ static void scale_vcores_bone(int freq)
 		break;
 	}
 
+	/* Disable USB power path */
+	if (tps65217_reg_write(TPS65217_PROT_LEVEL_NONE,
+			       TPS65217_POWER_PATH,
+			       TPS65217_PWR_PATH_OFF,
+			       TPS65217_PWR_PATH_EN_USB_BITMASK))
+		puts("tps65217_reg_write failure\n");
+
 	if (tps65217_reg_write(TPS65217_PROT_LEVEL_NONE,
 			       TPS65217_POWER_PATH,
 			       usb_cur_lim,
