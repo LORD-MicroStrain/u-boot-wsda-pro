@@ -48,7 +48,7 @@
 				"fi;" \
 			"fi;" \
 		"fi;\0" \
-	"envboot=mmc dev 1; " \
+	"envboot=setenv mmcdev 1; " \
 		"run mmcbootenv; " \
 		"setenv mmcdev 0; " \
 		"run mmcbootenv; " \
