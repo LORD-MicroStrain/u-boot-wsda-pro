@@ -93,7 +93,7 @@
 	"bootdir=.\0" \
 	"bootfile=uImage1\0" \
 	"fdtfile=dTree1\0" \
-	"console=ttyO0,115200n8\0" \
+	"console=ttyS0,115200n8\0" \
 	"optargs=quiet\0" \
 	"findfdt="\
 		"if test $bootsel = 2; then " \
